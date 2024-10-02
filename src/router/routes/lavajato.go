@@ -6,7 +6,7 @@ import (
 )
 
 var lavajatoRouter = []Route{
-	//avarias
+	//Breakdowns
 	{
 		URI:      "/v1/breakdowns",
 		Method:   http.MethodPost,
@@ -27,7 +27,7 @@ var lavajatoRouter = []Route{
 		Method:   http.MethodDelete,
 		Function: controller.DeleteBreakdowns,
 	},
-	//cargo
+	//Area Of Activity
 	{
 		URI:      "/v1/areaofactivity",
 		Method:   http.MethodPost,
@@ -48,7 +48,7 @@ var lavajatoRouter = []Route{
 		Method:   http.MethodDelete,
 		Function: controller.DeleteAreaOfActivity,
 	},
-	//cliente
+	//Client
 	{
 		URI:      "/v1/client",
 		Method:   http.MethodPost,
@@ -69,7 +69,7 @@ var lavajatoRouter = []Route{
 		Method:   http.MethodDelete,
 		Function: controller.DeleteClient,
 	},
-	//funcionario
+	//Employee
 	{
 		URI:      "/v1/employee",
 		Method:   http.MethodPost,
@@ -90,7 +90,7 @@ var lavajatoRouter = []Route{
 		Method:   http.MethodDelete,
 		Function: controller.DeleteEmployee,
 	},
-	//Ordens_de_serviço
+	//Service Orders
 	{
 		URI:      "/v1/servicesorders",
 		Method:   http.MethodPost,
@@ -111,6 +111,7 @@ var lavajatoRouter = []Route{
 		Method:   http.MethodDelete,
 		Function: controller.DeleteServiceOrders,
 	},
+	//payment
 	{
 		URI:      "/v1/payment",
 		Method:   http.MethodPost,
@@ -130,5 +131,46 @@ var lavajatoRouter = []Route{
 		URI:      "/v1/payment/{paymentId}",
 		Method:   http.MethodDelete,
 		Function: controller.DeletePayment,
+	},
+	//services
+	{
+		URI:      "/v1/service",
+		Method:   http.MethodPost,
+		Function: controller.CreateService,
+	},
+	{
+		URI:      "/v1/service",
+		Method:   http.MethodGet,
+		Function: controller.SearchService,
+	},
+	{
+		URI:      "/v1/service/{serviceId}",
+		Method:   http.MethodPut,
+		Function: controller.ToAlterService,
+	},
+	{
+		URI:      "/v1/service/{serviceId}",
+		Method:   http.MethodDelete,
+		Function: controller.DeleteService,
+	},
+	{
+		URI:      "/v1/vehicle",
+		Method:   http.MethodPost,
+		Function: controller.CreateVehicle,
+	},
+	{
+		URI:      "/v1/vehicle",
+		Method:   http.MethodGet,
+		Function: controller.SearchVehicle,
+	},
+	{
+		URI:      "/v1/vehicle/{vehicleId}",
+		Method:   http.MethodPut,
+		Function: controller.ToAlterVehicle,
+	},
+	{
+		URI:      "/v1/vehicle/{vehicleId}",
+		Method:   http.MethodDelete,
+		Function: controller.DeleteVehicle,
 	},
 }
