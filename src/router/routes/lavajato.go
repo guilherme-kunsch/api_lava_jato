@@ -18,14 +18,14 @@ var lavajatoRouter = []Route{
 		Function: controller.SearchBreakdowns,
 	},
 	{
-		URI:      "/v1/breakdowns/{breakdowsId}",
+		URI:      "/v1/breakdowns/{breakdownsId}",
 		Method:   http.MethodPut,
-		Function: controller.SearchBreakdowns,
+		Function: controller.ToAlterBreakdowns,
 	},
 	{
-		URI:      "/v1/breakdowns/{breakdowsId}",
+		URI:      "/v1/breakdowns/{breakdownsId}",
 		Method:   http.MethodDelete,
-		Function: controller.SearchBreakdowns,
+		Function: controller.DeleteBreakdowns,
 	},
 	//cargo
 	{
@@ -61,7 +61,7 @@ var lavajatoRouter = []Route{
 	},
 	{
 		URI:      "/v1/client/{clientId}",
-		Method:   http.MethodPost,
+		Method:   http.MethodPut,
 		Function: controller.ToAlterClient,
 	},
 	{
@@ -91,5 +91,44 @@ var lavajatoRouter = []Route{
 		Function: controller.DeleteEmployee,
 	},
 	//Ordens_de_serviço
-
+	{
+		URI:      "/v1/servicesorders",
+		Method:   http.MethodPost,
+		Function: controller.CreateServiceOrders,
+	},
+	{
+		URI:      "/v1/servicesorders",
+		Method:   http.MethodGet,
+		Function: controller.SearchServiceOrders,
+	},
+	{
+		URI:      "/v1/servicesorders/{serviceordersId}",
+		Method:   http.MethodPut,
+		Function: controller.ToAlterServiceOrders,
+	},
+	{
+		URI:      "/v1/servicesorders/{serviceordersId}",
+		Method:   http.MethodDelete,
+		Function: controller.DeleteServiceOrders,
+	},
+	{
+		URI:      "/v1/payment",
+		Method:   http.MethodPost,
+		Function: controller.CreatePayment,
+	},
+	{
+		URI:      "/v1/payment",
+		Method:   http.MethodGet,
+		Function: controller.SearchClient,
+	},
+	{
+		URI:      "/v1/payment/{paymentId}",
+		Method:   http.MethodPut,
+		Function: controller.ToAlterPayment,
+	},
+	{
+		URI:      "/v1/payment/{paymentId}",
+		Method:   http.MethodDelete,
+		Function: controller.DeletePayment,
+	},
 }
