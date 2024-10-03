@@ -153,6 +153,7 @@ var lavajatoRouter = []Route{
 		Method:   http.MethodDelete,
 		Function: controller.DeleteService,
 	},
+	//Vehicle
 	{
 		URI:      "/v1/vehicle",
 		Method:   http.MethodPost,
