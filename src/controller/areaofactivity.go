@@ -34,7 +34,7 @@ func CreateAreaOfActivity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := validate.Struct(area); err != nil {
+	if err := repositories.GetValidator().Struct(area); err != nil {
 		response.Erro(w, http.StatusBadRequest, err)
 		return
 	}
@@ -63,27 +63,7 @@ func CreateAreaOfActivity(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, area)
 }
 
-func SearchAreasOfActivity(w http.ResponseWriter, r *http.Request) {
-	area := strings.ToLower(r.URL.Query().Get("cargo"))
-	db, err := banco.Conection()
-	if err != nil {
-		response.Erro(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	defer db.Close()
-
-	repository := repositories.NewAreaOfActivity(db)
-	areas, err := repository.Search(area)
-	if err != nil {
-		response.Erro(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	response.JSON(w, http.StatusOK, areas)
-}
-
-func SearchAreaOfActivity(w http.ResponseWriter, r *http.Request) {
+func SearchAreaOfActivityId(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	ID, err := strconv.ParseUint(params["activityId"], 10, 32)
@@ -108,13 +88,86 @@ func SearchAreaOfActivity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, http.StatusOK, area)
+}
 
+func SearchAreasOfActivity(w http.ResponseWriter, r *http.Request) {
+	area := strings.ToLower(r.URL.Query().Get("cargo"))
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewAreaOfActivity(db)
+	areas, err := repository.Search(area)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, areas)
 }
 
 func ToAlterAreaOfActivity(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	areaID, err := strconv.ParseUint(params["activityId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
 
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var area models.AreaOfActivity
+	if err := json.Unmarshal(requestBody, &area); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewAreaOfActivity(db)
+	if err = repository.Update(areaID, area); err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 }
 
 func DeleteAreaOfActivity(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	areaID, err := strconv.ParseUint(params["activityId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
 
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewAreaOfActivity(db)
+	if err = repository.Delete(areaID); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 }

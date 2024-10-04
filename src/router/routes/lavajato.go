@@ -13,6 +13,11 @@ var lavajatoRouter = []Route{
 		Function: controller.CreateBreakdowns,
 	},
 	{
+		URI:      "/v1/breakdowns/{breakdownsId}",
+		Method:   http.MethodGet,
+		Function: controller.SearchBreakdownId,
+	},
+	{
 		URI:      "/v1/breakdowns",
 		Method:   http.MethodGet,
 		Function: controller.SearchBreakdowns,
@@ -41,7 +46,7 @@ var lavajatoRouter = []Route{
 	{
 		URI:      "/v1/areaofactivity/{activityId}",
 		Method:   http.MethodGet,
-		Function: controller.SearchAreaOfActivity,
+		Function: controller.SearchAreaOfActivityId,
 	},
 	{
 		URI:      "/v1/areaofactivity/{activityId}",

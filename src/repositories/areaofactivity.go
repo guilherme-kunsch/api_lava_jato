@@ -33,7 +33,7 @@ func (repository AreaOfActivity) Create(area models.AreaOfActivity) (uint64, err
 	return uint64(lastID), nil
 }
 
-// Search Area
+// Search Areas
 func (repository AreaOfActivity) Search(area string) ([]models.AreaOfActivity, error) {
 	area = fmt.Sprintf("%%%s%%", area)
 	rows, err := repository.db.Query("select cargo, salario from cargos where cargo LIKE ?", area)
@@ -57,8 +57,7 @@ func (repository AreaOfActivity) Search(area string) ([]models.AreaOfActivity, e
 	return areas, nil
 }
 
-//Search ID
-
+// Search ID
 func (respository AreaOfActivity) SearchId(ID uint64) (models.AreaOfActivity, error) {
 	rows, err := respository.db.Query("select * from cargos where id = ?", ID)
 	if err != nil {
@@ -76,4 +75,35 @@ func (respository AreaOfActivity) SearchId(ID uint64) (models.AreaOfActivity, er
 	}
 
 	return area, nil
+}
+
+func (repository AreaOfActivity) Update(ID uint64, area models.AreaOfActivity) error {
+	statement, err := repository.db.Prepare("update cargos set cargo = ?, salario = ? where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(area.Cargo, area.Salario, ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repository AreaOfActivity) Delete(ID uint64) error {
+	statement, err := repository.db.Prepare("delete from cargos where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		return err
+	}
+
+	return nil
+
 }
