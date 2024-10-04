@@ -8,14 +8,17 @@ import (
 	"lavajato/src/repositories"
 	"lavajato/src/response"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/go-playground/validator"
+	"github.com/gorilla/mux"
 )
 
 var validate *validator.Validate
 
 func init() {
-	validate = validator.New() // Inicializa o validador
+	validate = validator.New()
 }
 
 func CreateAreaOfActivity(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +63,51 @@ func CreateAreaOfActivity(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, area)
 }
 
+func SearchAreasOfActivity(w http.ResponseWriter, r *http.Request) {
+	area := strings.ToLower(r.URL.Query().Get("cargo"))
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewAreaOfActivity(db)
+	areas, err := repository.Search(area)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, areas)
+}
+
 func SearchAreaOfActivity(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	ID, err := strconv.ParseUint(params["activityId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewAreaOfActivity(db)
+	area, err := repository.SearchId(ID)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, area)
 
 }
 

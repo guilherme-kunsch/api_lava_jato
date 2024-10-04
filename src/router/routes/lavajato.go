@@ -36,6 +36,11 @@ var lavajatoRouter = []Route{
 	{
 		URI:      "/v1/areaofactivity",
 		Method:   http.MethodGet,
+		Function: controller.SearchAreasOfActivity,
+	},
+	{
+		URI:      "/v1/areaofactivity/{activityId}",
+		Method:   http.MethodGet,
 		Function: controller.SearchAreaOfActivity,
 	},
 	{
