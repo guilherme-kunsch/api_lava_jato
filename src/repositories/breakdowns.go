@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"fmt"
 	"lavajato/src/models"
 )
 
@@ -32,7 +33,8 @@ func (repository Breakdowns) Create(breakdowns models.Breakdowns) (uint64, error
 	return uint64(lastID), nil
 }
 
-func (repository Breakdowns) SearchBreakdown(ID uint64) ([]models.Breakdowns, error) {
+// Search breakdown ID
+func (repository Breakdowns) SearchBreakdownId(ID uint64) ([]models.Breakdowns, error) {
 	rows, err := repository.db.Query("SELECT ordem_servico_id, descricao, funcionario_id, desconto_aplicado FROM avarias WHERE ordem_servico_id = ?", ID)
 	if err != nil {
 		return nil, err
@@ -52,4 +54,44 @@ func (repository Breakdowns) SearchBreakdown(ID uint64) ([]models.Breakdowns, er
 	}
 
 	return breakdowns, nil
+}
+
+// Search breakdowns
+func (repository Breakdowns) SearchBreakdown(breakdown string) ([]models.Breakdowns, error) {
+	breakdown = fmt.Sprintf("%%%s%%", breakdown)
+	rows, err := repository.db.Query("select id, ordem_servico_id, descricao, funcionario_id, desconto_aplicado from avarias where descricao LIKE ?", breakdown)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var breakdowns []models.Breakdowns
+
+	for rows.Next() {
+		var breakdown models.Breakdowns
+		if err := rows.Scan(&breakdown.ID, &breakdown.OrdersService, &breakdown.Description, &breakdown.EmployeeID, &breakdown.DiscountApplied); err != nil {
+			return nil, err
+		}
+
+		breakdowns = append(breakdowns, breakdown)
+	}
+
+	return breakdowns, nil
+}
+
+func (repository Breakdowns) UpdateBreakdown(ID uint64, breakdown models.Breakdowns) error {
+	statement, err := repository.db.Prepare("update avarias set ordem_servico_id = ?, descricao = ?, funcionario_id = ?, desconto_aplicado = ?, valor_descontado = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(breakdown.OrdersService, breakdown.Description, breakdown.EmployeeID, breakdown.DiscountApplied, breakdown.ValueDiscount, ID); err != nil {
+		return err
+	}
+
+	return nil
+
 }
