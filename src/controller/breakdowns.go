@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"lavajato/src/banco"
 	"lavajato/src/models"
@@ -106,7 +105,6 @@ func SearchBreakdowns(w http.ResponseWriter, r *http.Request) {
 
 func ToAlterBreakdowns(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	fmt.Println("Breakdown ID:", params["breakdownsId"])
 
 	breakdownID, err := strconv.ParseUint(params["breakdownsId"], 10, 32)
 	if err != nil {
@@ -150,5 +148,28 @@ func ToAlterBreakdowns(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteBreakdowns(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	breakdownsID, err := strconv.ParseUint(params["breakdownsId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewBreakdowns(db)
+	if err = repository.DeleteBreakdowns(breakdownsID); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 
 }

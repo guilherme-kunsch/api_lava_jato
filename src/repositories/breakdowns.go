@@ -95,3 +95,19 @@ func (repository Breakdowns) UpdateBreakdown(ID uint64, breakdown models.Breakdo
 	return nil
 
 }
+
+func (repository Breakdowns) DeleteBreakdowns(ID uint64) error {
+	statement, err := repository.db.Prepare("delete from avarias where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		return err
+	}
+
+	return nil
+
+}
