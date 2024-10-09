@@ -71,6 +71,11 @@ var lavajatoRouter = []Route{
 	},
 	{
 		URI:      "/v1/client/{clientId}",
+		Method:   http.MethodGet,
+		Function: controller.SearchClientID,
+	},
+	{
+		URI:      "/v1/client/{clientId}",
 		Method:   http.MethodPut,
 		Function: controller.ToAlterClient,
 	},
