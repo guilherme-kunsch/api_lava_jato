@@ -72,7 +72,7 @@ var lavajatoRouter = []Route{
 	{
 		URI:      "/v1/client/{clientId}",
 		Method:   http.MethodGet,
-		Function: controller.SearchClientID,
+		Function: controller.SearchEmployeeId,
 	},
 	{
 		URI:      "/v1/client/{clientId}",
@@ -94,6 +94,11 @@ var lavajatoRouter = []Route{
 		URI:      "/v1/employee",
 		Method:   http.MethodGet,
 		Function: controller.SearchEmployee,
+	},
+	{
+		URI:      "/v1/employee/{employeeId}",
+		Method:   http.MethodGet,
+		Function: controller.SearchEmployeeId,
 	},
 	{
 		URI:      "/v1/employee/{employeeId}",
