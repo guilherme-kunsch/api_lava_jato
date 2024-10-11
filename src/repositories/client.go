@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"fmt"
 	"lavajato/src/models"
 )
 
@@ -45,7 +46,7 @@ func (repository Client) SearchClientID(ID uint64) ([]models.Client, error) {
 	for rows.Next() {
 		var c models.Client
 
-		if err = rows.Scan(&c.Name, &c.Phone, &c.Email, &c.ID); err != nil {
+		if err = rows.Scan(&c.Name, &c.Phone, &c.Email); err != nil {
 			return nil, err
 		}
 
@@ -53,4 +54,58 @@ func (repository Client) SearchClientID(ID uint64) ([]models.Client, error) {
 	}
 
 	return clients, nil
+}
+
+func (repository Client) SearchClient(client string) ([]models.Client, error) {
+	client = fmt.Sprintf("%%%s%%", client)
+
+	rows, err := repository.db.Query("select * from clientes where nome LIKE ?", client)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var clients []models.Client
+
+	for rows.Next() {
+		var client models.Client
+		if err := rows.Scan(&client.ID, &client.Name, &client.Phone, &client.Email); err != nil {
+			return nil, err
+		}
+
+		clients = append(clients, client)
+	}
+
+	return clients, nil
+}
+
+func (repository Client) UpdateClient(ID uint64, client models.Client) error {
+	statement, err := repository.db.Prepare("update clientes set nome = ?, telefone = ?, email = ? where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(&client.Name, &client.Phone, &client.Email, ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repository Client) DeleteClient(ID uint64) error {
+	statement, err := repository.db.Prepare("delete * from clientes where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		return err
+	}
+
+	return nil
 }

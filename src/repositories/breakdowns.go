@@ -93,7 +93,6 @@ func (repository Breakdowns) UpdateBreakdown(ID uint64, breakdown models.Breakdo
 	}
 
 	return nil
-
 }
 
 func (repository Breakdowns) DeleteBreakdowns(ID uint64) error {
@@ -109,5 +108,4 @@ func (repository Breakdowns) DeleteBreakdowns(ID uint64) error {
 	}
 
 	return nil
-
 }
