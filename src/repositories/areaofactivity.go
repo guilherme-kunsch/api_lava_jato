@@ -59,6 +59,7 @@ func (repository AreaOfActivity) Search(area string) ([]models.AreaOfActivity, e
 
 // Search ID
 func (respository AreaOfActivity) SearchId(ID uint64) (models.AreaOfActivity, error) {
+
 	rows, err := respository.db.Query("select * from cargos where id = ?", ID)
 	if err != nil {
 		return models.AreaOfActivity{}, nil
@@ -93,6 +94,15 @@ func (repository AreaOfActivity) Update(ID uint64, area models.AreaOfActivity) e
 }
 
 func (repository AreaOfActivity) Delete(ID uint64) error {
+	var count int
+	err := repository.db.QueryRow("SELECT COUNT(*) FROM ordens_de_servico WHERE id = ?", ID).Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		return fmt.Errorf("não é possível excluir esse cargo, pois ele possui associações em outras tabelas")
+	}
 	statement, err := repository.db.Prepare("delete from cargos where id = ?")
 	if err != nil {
 		return err

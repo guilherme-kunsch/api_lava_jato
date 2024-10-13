@@ -59,6 +59,23 @@ func CreateEmployee(w http.ResponseWriter, r *http.Request) {
 func SearchEmployee(w http.ResponseWriter, r *http.Request) {
 	params := strings.ToLower(r.URL.Query().Get("funcionario"))
 
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewEmployee(db)
+	employees, err := repository.SearchEmployee(params)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, employees)
+
 }
 
 func SearchEmployeeId(w http.ResponseWriter, r *http.Request) {
@@ -89,9 +106,71 @@ func SearchEmployeeId(w http.ResponseWriter, r *http.Request) {
 }
 
 func ToAlterEmployee(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
+	ID, err := strconv.ParseUint(params["employeeId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	var employee models.Employee
+
+	if err := json.Unmarshal(body, &employee); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := repositories.GetValidator().Struct(employee); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewEmployee(db)
+	if err = repository.UpdateEmployee(ID, employee); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 }
 
 func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
+	ID, err := strconv.ParseUint(params["employeeId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewEmployee(db)
+	if err := repository.DeleteEmployee(ID); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 }

@@ -96,7 +96,16 @@ func (repository Client) UpdateClient(ID uint64, client models.Client) error {
 }
 
 func (repository Client) DeleteClient(ID uint64) error {
-	statement, err := repository.db.Prepare("delete * from clientes where id = ?")
+	var count int
+	err := repository.db.QueryRow("SELECT COUNT(*) FROM ordens_de_servico WHERE cliente_id = ?", ID).Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		return fmt.Errorf("não é possível excluir o cliente, pois ele possui %d ordens de serviço associadas", count)
+	}
+	statement, err := repository.db.Prepare("delete from clientes where id = ?")
 	if err != nil {
 		return err
 	}

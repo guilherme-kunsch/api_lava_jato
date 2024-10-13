@@ -149,6 +149,7 @@ func ToAlterAreaOfActivity(w http.ResponseWriter, r *http.Request) {
 
 func DeleteAreaOfActivity(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+
 	areaID, err := strconv.ParseUint(params["activityId"], 10, 32)
 	if err != nil {
 		response.Erro(w, http.StatusBadRequest, err)
