@@ -144,6 +144,11 @@ var lavajatoRouter = []Route{
 	},
 	{
 		URI:      "/v1/payment/{paymentId}",
+		Method:   http.MethodGet,
+		Function: controller.SearchPaymentID,
+	},
+	{
+		URI:      "/v1/payment/{paymentId}",
 		Method:   http.MethodPut,
 		Function: controller.ToAlterPayment,
 	},
