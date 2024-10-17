@@ -91,3 +91,18 @@ func (repository Payment) UpdatePayment(ID uint64, payment models.Payment) error
 
 	return nil
 }
+
+func (repository Payment) DeletePayment(ID uint64) error {
+	statement, err := repository.db.Prepare("delete from pagamentos where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		return err
+	}
+
+	return err
+}
