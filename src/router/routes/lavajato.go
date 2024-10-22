@@ -122,6 +122,11 @@ var lavajatoRouter = []Route{
 		Function: controller.SearchServiceOrders,
 	},
 	{
+		URI:      "/v1/serviceorders/{serviceordersId}",
+		Method:   http.MethodGet,
+		Function: controller.SearchServiceOrdersID,
+	},
+	{
 		URI:      "/v1/servicesorders/{serviceordersId}",
 		Method:   http.MethodPut,
 		Function: controller.ToAlterServiceOrders,

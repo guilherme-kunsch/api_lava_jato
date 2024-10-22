@@ -92,9 +92,13 @@ func (repository ServiceOrders) SearchServiceOrders(nameClient string) ([]models
 	return servicesOrders, nil
 }
 
-// func (repository ServiceOrders) SearchServiceOrdersID(ID uint64) ([]models.ServiceOrder, error) {
+func (repository ServiceOrders) SearchServiceOrdersID(ID uint64) ([]models.ServiceOrder, error) {
+	rows, err := repository.db.Query("SELECT  ordem.id as 'id', cli.nome as 'nome_cliente', serv.descricao as 'descricao', vei.placa as 'placa', func.nome as 'nome_funcionario', ordem.total as 'total', ordem.data_servico as 'data_do_servico' FROM ordens_de_servico as ordem INNER JOIN clientes as cli ON cli.id = ordem.cliente_id LEFT JOIN ordem_servico_servicos as oss ON oss.ordem_servico_id = ordem.id LEFT JOIN servicos as serv ON serv.id = oss.servico_id LEFT JOIN veiculos as vei ON vei.id = ordem.veiculo_id LEFT JOIN funcionarios as func ON func.id = ordem.funcionario_id WHERE func.nome LIKE '%Carlos%'")
 
-// }
+	if err != nil {
+		return nil, err
+	}
+}
 
 // func (repository ServiceOrders) UpdateServiceOrders(ID uint64, serviceOrders models.ServiceOrder) error {
 

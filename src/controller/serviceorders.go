@@ -8,7 +8,10 @@ import (
 	"lavajato/src/repositories"
 	"lavajato/src/response"
 	"net/http"
+	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateServiceOrders(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +70,33 @@ func SearchServiceOrders(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, http.StatusOK, serviceOrders)
+}
+
+func SearchServiceOrdersID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	ID, err := strconv.ParseUint(params["serviceordersId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewServiceOrders(db)
+	serviceOrder, err := repository.SearchServiceOrdersID(ID)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, serviceOrder)
 }
 
 func ToAlterServiceOrders(w http.ResponseWriter, r *http.Request) {
