@@ -67,9 +67,30 @@ func (repository ServiceOrders) CreateServiceOrders(serviceOrders models.Service
 	return uint64(lastId), nil
 }
 
-// func (repository ServiceOrders) SearchServiceOrders(serviceOrders string) ([]models.ServiceOrder, error) {
+func (repository ServiceOrders) SearchServiceOrders(nameClient string) ([]models.ServiceOrdersResponse, error) {
+	nameClient = fmt.Sprintf("%%%s%%", nameClient)
 
-// }
+	rows, err := repository.db.Query("SELECT ordem.id as 'id', cli.nome as 'nome', serv.descricao as 'descricao', ordem.total as 'total', ordem.data_servico as 'data_do_servico' FROM ordens_de_servico as ordem INNER JOIN clientes as cli ON cli.id = ordem.cliente_id LEFT JOIN ordem_servico_servicos as oss ON oss.ordem_servico_id = ordem.id LEFT JOIN servicos as serv ON serv.id = oss.servico_id WHERE LOWER(cli.nome) LIKE ?", nameClient)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var servicesOrders []models.ServiceOrdersResponse
+
+	for rows.Next() {
+		var serviceOrder models.ServiceOrdersResponse
+
+		if err := rows.Scan(&serviceOrder.ID, &serviceOrder.NameClient, &serviceOrder.Description, &serviceOrder.Amount, &serviceOrder.Date); err != nil {
+			return nil, err
+		}
+
+		servicesOrders = append(servicesOrders, serviceOrder)
+	}
+
+	return servicesOrders, nil
+}
 
 // func (repository ServiceOrders) SearchServiceOrdersID(ID uint64) ([]models.ServiceOrder, error) {
 
