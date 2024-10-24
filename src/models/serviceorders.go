@@ -15,6 +15,16 @@ type ServiceOrdersResponse struct {
 	ID          uint64    `json:"id"`
 	NameClient  string    `json:"nome"`
 	Description string    `json:"descricao"`
-	Amount      float64   `json:"total"`
+	Amount      float32   `json:"total"`
 	Date        time.Time `json:"data_servico"`
+}
+
+type ServiceResponse struct {
+	ID           uint64    `json:"id"`
+	Name         string    `json:"nome_cliente"`
+	Description  string    `json:"descricao"`
+	Plate        string    `json:"placa"`
+	NameEmployee string    `json:"nome_funcionario"`
+	Amount       float32   `json:"total"`
+	DateService  time.Time `json:"data_do_servico"`
 }

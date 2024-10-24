@@ -100,7 +100,45 @@ func SearchServiceOrdersID(w http.ResponseWriter, r *http.Request) {
 }
 
 func ToAlterServiceOrders(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
+	ID, err := strconv.ParseUint(params["serviceordersId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var service models.ServiceOrder
+
+	if err := json.Unmarshal(requestBody, &service); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := repositories.GetValidator().Struct(service); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewServiceOrders(db)
+	if err := repository.UpdateServiceOrders(ID, service); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
 }
 
 func DeleteServiceOrders(w http.ResponseWriter, r *http.Request) {
