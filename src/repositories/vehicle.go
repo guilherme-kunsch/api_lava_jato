@@ -87,5 +87,62 @@ func (repository Vehicle) SearchVehicle(plate string) ([]models.VehicleResponse,
 }
 
 func (repository Vehicle) SearchVehicleID(ID uint64) ([]models.VehicleResponse, error) {
+	rows, err := repository.db.Query("SELECT vei.id, cli.nome, vei.marca, vei.modelo, vei.placa, vei.ano FROM veiculos AS vei INNER JOIN clientes AS cli ON cli.id = vei.cliente_id WHERE vei.id = ?", ID)
 
+	if err != nil {
+		return nil, err
+	}
+
+	var vehicles []models.VehicleResponse
+
+	for rows.Next() {
+		var vehicle models.VehicleResponse
+		if err := rows.Scan(&vehicle.ID, &vehicle.NameClient, &vehicle.Brand, &vehicle.Model, &vehicle.Plate, &vehicle.Year); err != nil {
+			return nil, err
+		}
+
+		vehicles = append(vehicles, vehicle)
+	}
+
+	return vehicles, err
+}
+
+func (repository Vehicle) UpdateVehicle(ID uint64, vehicle models.Vehicle) error {
+	statement, err := repository.db.Prepare("UPDATE veiculos SET cliente_id = ?, marcar = ?, modelo = ?, placa = ?, ano = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(&vehicle.ClientId, &vehicle.Brand, &vehicle.Model, &vehicle.Plate, &vehicle.Year); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repository Vehicle) DeleteVehicle(ID uint64) error {
+	var count int
+	err := repository.db.QueryRow("SELECT COUNT(*) FROM veiculos WHERE id = ?", ID).Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		return fmt.Errorf("não é possível excluir um veiculo, pois ele possui %d ordem de serviço associada", count)
+	}
+
+	statement, err := repository.db.Prepare("DELETE FROM veiculos WHERE id = ?")
+	if err != nil {
+		return nil
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		return nil
+	}
+
+	return err
 }

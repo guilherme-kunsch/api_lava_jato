@@ -109,9 +109,71 @@ func SearchVehicleID(w http.ResponseWriter, r *http.Request) {
 }
 
 func ToAlterVehicle(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
+	ID, err := strconv.ParseUint(params["serviceordersId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var vehicle models.Vehicle
+
+	if err := json.Unmarshal(requestBody, &vehicle); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := repositories.GetValidator().Struct(vehicle); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewVehicle(db)
+	if err := repository.UpdateVehicle(ID, vehicle); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, err)
 }
 
 func DeleteVehicle(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
 
+	ID, err := strconv.ParseUint(params["serviceordersId"], 10, 32)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	db, err := banco.Conection()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewVehicle(db)
+	if err := repository.DeleteVehicle(ID); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 }
