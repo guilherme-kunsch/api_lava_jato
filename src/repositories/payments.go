@@ -20,7 +20,7 @@ func (repository Payment) CreatePayment(payment models.Payment) (uint64, error) 
 		return 0, nil
 	}
 
-	insertId, err := statement.Exec(&payment.EmployeeId, &payment.DatePayment, &payment.Value)
+	insertId, err := statement.Exec(payment.EmployeeId, payment.DatePayment, payment.Value)
 	if err != nil {
 		return 0, nil
 	}

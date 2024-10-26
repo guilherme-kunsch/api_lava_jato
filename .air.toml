@@ -1,0 +1,21 @@
+
+
+# Define the root directory of your Go project
+root = "."
+
+# The build command
+build = {
+  cmd = "go build -o ./tmp/main .",
+  bin = "tmp/main",
+  watch_dir = "."
+
+  # Optional: include/exclude files
+  include_ext = ["go", "tpl", "html"]
+  exclude_dir = ["assets", "vendor"]
+}
+
+# The run command
+run = {
+  cmd = "./tmp/main",
+  wait = 2000
+}

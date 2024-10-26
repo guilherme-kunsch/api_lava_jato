@@ -20,7 +20,7 @@ func (repository Client) CreateClient(client models.Client) (uint64, error) {
 		return 0, nil
 	}
 
-	insert, err := statement.Exec(&client.Name, &client.Phone, &client.Email)
+	insert, err := statement.Exec(client.Name, client.Phone, client.Email)
 	if err != nil {
 		return 0, nil
 	}

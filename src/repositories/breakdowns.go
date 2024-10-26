@@ -20,7 +20,7 @@ func (repository Breakdowns) Create(breakdowns models.Breakdowns) (uint64, error
 		return 0, nil
 	}
 
-	insert, err := statement.Exec(&breakdowns.OrdersService, &breakdowns.Description, &breakdowns.EmployeeID, &breakdowns.DiscountApplied)
+	insert, err := statement.Exec(breakdowns.OrdersService, breakdowns.Description, breakdowns.EmployeeID, breakdowns.DiscountApplied)
 	if err != nil {
 		return 0, nil
 	}

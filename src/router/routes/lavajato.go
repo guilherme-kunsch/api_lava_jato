@@ -169,9 +169,9 @@ var lavajatoRouter = []Route{
 		Function: controller.CreateService,
 	},
 	{
-		URI:      "/v1/service",
+		URI:      "/v1/service/{serviceId}",
 		Method:   http.MethodGet,
-		Function: controller.SearchService,
+		Function: controller.SearchServiceID,
 	},
 	{
 		URI:      "/v1/service/{serviceId}",
@@ -193,6 +193,11 @@ var lavajatoRouter = []Route{
 		URI:      "/v1/vehicle",
 		Method:   http.MethodGet,
 		Function: controller.SearchVehicle,
+	},
+	{
+		URI:      "/v1/vehicle/{vehicleId}",
+		Method:   http.MethodGet,
+		Function: controller.SearchVehicleID,
 	},
 	{
 		URI:      "/v1/vehicle/{vehicleId}",

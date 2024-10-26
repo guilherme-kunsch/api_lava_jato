@@ -44,18 +44,18 @@ func (repository ServiceOrders) CreateServiceOrders(serviceOrders models.Service
 
 	statement, err := repository.db.Prepare("INSERT INTO ordens_de_servico (cliente_id, veiculo_id, funcionario_id, data_servico, total) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
-		return 0, fmt.Errorf("erro ao preparar a query de inserção: %w", err)
+		return 0, nil
 	}
 	defer statement.Close()
 
 	insert, err := statement.Exec(serviceOrders.ClientId, serviceOrders.VehicleId, serviceOrders.EmployeeId, serviceOrders.ServiceDate, serviceOrders.Total)
 	if err != nil {
-		return 0, fmt.Errorf("erro ao executar a query de inserção: %w", err)
+		return 0, nil
 	}
 
 	lastId, err := insert.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("erro ao pegar o último ID inserido: %w", err)
+		return 0, nil
 	}
 
 	return uint64(lastId), nil
@@ -122,6 +122,27 @@ func (repository ServiceOrders) UpdateServiceOrders(ID uint64, serviceOrders mod
 	return nil
 }
 
-// func (repository ServiceOrders) DeleteServiceOrders(ID uint64) error {
+func (repository ServiceOrders) DeleteServiceOrders(ID uint64) error {
+	var count int
+	err := repository.db.QueryRow("SELECT COUNT(*) FROM ordens_de_servico WHERE id = ?", ID).Scan(&count)
+	if err != nil {
+		return err
+	}
 
-// }
+	if count > 0 {
+		return fmt.Errorf("não é possível excluir uma ordem de serviço, pois ele possui %d avarias associadas", count)
+	}
+
+	statement, err := repository.db.Prepare("DELETE FROM ordens_de_servico WHERE id = ?")
+	if err != nil {
+		return nil
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(ID); err != nil {
+		return nil
+	}
+
+	return err
+}

@@ -20,7 +20,7 @@ func (repository Employee) CreateEmployee(employee models.Employee) (uint64, err
 		return 0, nil
 	}
 
-	insert, err := statement.Exec(&employee.Name, &employee.Phone, &employee.Area)
+	insert, err := statement.Exec(employee.Name, employee.Phone, employee.Area)
 	if err != nil {
 		return 0, nil
 	}
