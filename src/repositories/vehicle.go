@@ -108,7 +108,7 @@ func (repository Vehicle) SearchVehicleID(ID uint64) ([]models.VehicleResponse, 
 }
 
 func (repository Vehicle) UpdateVehicle(ID uint64, vehicle models.Vehicle) error {
-	statement, err := repository.db.Prepare("UPDATE veiculos SET cliente_id = ?, marcar = ?, modelo = ?, placa = ?, ano = ? WHERE id = ?")
+	statement, err := repository.db.Prepare("UPDATE veiculos SET cliente_id = ?, marca = ?, modelo = ?, placa = ?, ano = ? WHERE id = ?")
 	if err != nil {
 		return err
 	}
